@@ -1,0 +1,25 @@
+{
+  "name": "bl3nd-smart-contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wakeupdao/bl3nd-smart-contracts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wakeupdao/bl3nd-smart-contracts/issues"
+  },
+  "homepage": "https://github.com/wakeupdao/bl3nd-smart-contracts#readme",
+  "devDependencies": {
+    "truffle": "^5.4.29"
+  }
+}
