@@ -1,5 +1,4 @@
 const assert = require('assert')
-const { hasUncaughtExceptionCaptureCallback } = require('process')
 const { createBayc, baycIds, createLoot, lootIds } = require('./dummyNFTs')
 const Bl3nder = artifacts.require('Bl3nder')
 const Bl3ndDeed = artifacts.require('Bl3ndDeed')
