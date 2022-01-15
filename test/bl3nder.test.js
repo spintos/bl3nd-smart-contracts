@@ -1,13 +1,16 @@
 const assert = require('assert')
 const { createBayc, baycIds, createLoot, lootIds } = require('./dummyNFTs')
+
 const Bl3nd = artifacts.require('Bl3nd')
+const Bl3ndCrypt = artifacts.require('Bl3ndCrypt')
 const Bl3ndDeed = artifacts.require('Bl3ndDeed')
 
 contract('Bl3nder', (accounts) => {
   beforeEach(async () => {
     this.bayc = await createBayc()
     this.loot = await createLoot()
-    this.bl3nd = await Bl3nd.new()
+    const crypt = await Bl3ndCrypt.new()
+    this.bl3nd = await Bl3nd.new(crypt.address)
   })
 
   it('blends: creates a Bl3nd Deed that owns the blended nfts + mints an NFT', async () => {
@@ -58,7 +61,8 @@ contract('Bl3nd Deed', (accounts) => {
     this.bayc = await createBayc()
     this.loot = await createLoot()
 
-    this.bl3nd = await Bl3nd.new()
+    this.crypt = await Bl3ndCrypt.new()
+    this.bl3nd = await Bl3nd.new(this.crypt.address)
 
     await this.bayc.approve(this.bl3nd.address, baycIds[0])
     await this.loot.approve(this.bl3nd.address, lootIds[0])
@@ -97,5 +101,18 @@ contract('Bl3nd Deed', (accounts) => {
     assert.equal(await web3.eth.getCode(this.deed.address), '0x')
 
     await assert.rejects(() => this.bl3nd.ownerOf(this.tokenId))
+  })
+
+  it('seal: cannot unblend anymore + tokens are sent to the crypt', async () => {
+    await this.deed.seal()
+
+    await assert.rejects(() => this.deed.unblend())
+
+    assert.equal(await this.bayc.ownerOf(baycIds[0]), this.crypt.address)
+    assert.equal(await this.loot.ownerOf(lootIds[0]), this.crypt.address)
+  })
+
+  it('only owner can seal', async () => {
+    await assert.rejects(() => this.deed.seal({ from: accounts[1] }))
   })
 })

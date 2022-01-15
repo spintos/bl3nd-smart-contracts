@@ -4,8 +4,11 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
+contract Bl3ndCrypt {}
+
 contract Bl3ndDeed {
   Bl3nd blend;
+  address crypt;
 
   ERC721 public contract0;
   uint256 public id0;
@@ -13,17 +16,23 @@ contract Bl3ndDeed {
   ERC721 public contract1;
   uint256 public id1;
 
-  constructor(Bl3nd _blend, ERC721 _contract0, uint256 _id0, ERC721 _contract1, uint256 _id1) {
+  constructor(Bl3nd _blend, address _crypt, ERC721 _contract0, uint256 _id0, ERC721 _contract1, uint256 _id1) {
     blend = _blend;
+    crypt = _crypt;
     contract0 = _contract0;
     id0 = _id0;
     contract1 = _contract1;
     id1 = _id1;
   }
 
-  function unblend () public {
+  function onlyOwner () public view returns (address) {
     address owner = blend.ownerOf(blend.blendTokenId(contract0, id0, contract1, id1));
     require(msg.sender == owner, "Only owner");
+    return owner;
+  }
+
+  function unblend () public {
+    address owner = onlyOwner();
 
     contract0.transferFrom(address(this), owner, id0);
     contract1.transferFrom(address(this), owner, id1);
@@ -31,12 +40,21 @@ contract Bl3ndDeed {
     blend.setUnblent(contract0, id0, contract1, id1);
     selfdestruct(payable(tx.origin));
   }
+
+  function seal () public {
+    onlyOwner();
+    contract0.transferFrom(address(this), crypt, id0);
+    contract1.transferFrom(address(this), crypt, id1);
+  }
 }
 
 contract Bl3nd is ERC721 {
   mapping(uint256 => Bl3ndDeed) deeds;
+  address crypt;
 
-  constructor() ERC721("Bl3nd", "B3D") {}
+  constructor(address _crypt) ERC721("Bl3nd", "B3D") {
+    crypt = _crypt;
+  }
 
   function blendTokenId(ERC721 contract0, uint256 id0, ERC721 contract1, uint256 id1) public pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked(address(contract0), id0, address(contract1), id1)));
@@ -48,7 +66,7 @@ contract Bl3nd is ERC721 {
   }
 
   function blend(ERC721 contract0, uint256 id0, ERC721 contract1, uint256 id1) public {
-    Bl3ndDeed deed = new Bl3ndDeed(this, contract0, id0, contract1, id1);
+    Bl3ndDeed deed = new Bl3ndDeed(this, crypt, contract0, id0, contract1, id1);
 
     contract0.transferFrom(msg.sender, address(deed), id0);
     contract1.transferFrom(msg.sender, address(deed), id1);
