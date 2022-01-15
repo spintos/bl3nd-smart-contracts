@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/wakeupdao/bl3nd-smart-contracts#readme",
   "devDependencies": {
+    "@truffle/hdwallet-provider": "^2.0.0",
     "solidity-coverage": "^0.7.17",
     "truffle": "^5.4.29"
   },
