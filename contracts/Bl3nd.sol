@@ -52,7 +52,7 @@ contract Bl3nd is ERC721 {
   mapping(uint256 => Bl3ndDeed) deeds;
   address crypt;
 
-  constructor(address _crypt) ERC721("Bl3nd", "B3D") {
+  constructor(address _crypt) ERC721("Bl3nd", "BL3ND") {
     crypt = _crypt;
   }
 
