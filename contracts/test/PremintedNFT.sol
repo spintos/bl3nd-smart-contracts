@@ -17,6 +17,11 @@ contract PremintedNFTFactory {
 
   function createNFT(string memory name, string memory symbol, uint256[] memory ids) public {
     PremintedNFT nft = new PremintedNFT(name, symbol, ids);
+
+    for (uint256 i = 0; i < ids.length; i++) {
+      nft.transferFrom(address(this), msg.sender, ids[i]);
+    }
+
     emit NFTCreated(address(nft));
   }
 }
