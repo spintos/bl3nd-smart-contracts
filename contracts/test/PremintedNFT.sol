@@ -11,3 +11,12 @@ contract PremintedNFT is ERC721 {
     }
   }
 }
+
+contract PremintedNFTFactory {
+  event NFTCreated(address indexed contractAddress);
+
+  function createNFT(string memory name, string memory symbol, uint256[] memory ids) public {
+    PremintedNFT nft = new PremintedNFT(name, symbol, ids);
+    emit NFTCreated(address(nft));
+  }
+}
